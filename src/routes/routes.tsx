@@ -4,6 +4,8 @@ import PrivateLayout from "../Layout/PrivateLayout";
 import Booking from "../booking/Booking";
 import Home from "../pages/Home";
 import ErrorPage from "../ErrorPage";
+import Login from "../pages/account/Login";
+import PublicLayout from "../Layout/PublicLayout";
 
 const router = createBrowserRouter([
   {
@@ -12,9 +14,15 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        index: true,
-        element: <Home />,
+        path: "",
+        element: <PublicLayout />,
+
+        children: [
+          { index: true, element: <Booking /> },
+          { path: "login", element: <Login /> },
+        ],
       },
+
       {
         path: "private",
         element: <PrivateLayout />,
