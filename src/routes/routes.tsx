@@ -3,11 +3,13 @@ import App from "../App";
 import PrivateLayout from "../Layout/PrivateLayout";
 import Booking from "../booking/Booking";
 import Home from "../pages/Home";
+import ErrorPage from "../ErrorPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
