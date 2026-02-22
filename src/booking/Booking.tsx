@@ -57,6 +57,13 @@ function Booking() {
                   />
                 </div>
               </div>
+
+              <button
+                type="submit"
+                className="w-full  text-white rounded-md font-semibold hover:bg-green-600 hover:text-green-800 bg-green-700"
+              >
+                Show
+              </button>
             </form>
           </article>
         </div>
