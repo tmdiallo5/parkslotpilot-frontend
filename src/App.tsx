@@ -1,5 +1,11 @@
+import { Outlet } from "react-router";
+
 function App() {
-  return <main>book your place</main>;
+  return (
+    <main className="bg-gray-200 min-h-screen ">
+      <Outlet />
+    </main>
+  );
 }
 
 export default App;
