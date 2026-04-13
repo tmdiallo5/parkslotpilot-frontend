@@ -1,11 +1,17 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import App from "../App";
 import PrivateLayout from "../Layout/PrivateLayout";
-import Booking from "../booking/Booking";
-import Home from "../pages/Home";
+
 import ErrorPage from "../ErrorPage";
 import Login from "../pages/account/Login";
 import PublicLayout from "../Layout/PublicLayout";
+
+import SignUp from "../pages/account/SignUp";
+import Dashboard from "../components/Dashboard";
+import LandingPage from "../components/LandingPage";
+import SignupSuccess from "../components/SignupSuccess ";
+import Active from "../components/Active";
+import AccountActivated from "../components/AccountActivated";
 
 const router = createBrowserRouter([
   {
@@ -14,19 +20,25 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        path: "",
         element: <PublicLayout />,
 
         children: [
-          { index: true, element: <Booking /> },
+          { index: true, element: <LandingPage /> },
           { path: "login", element: <Login /> },
+          { path: "signup", element: <SignUp /> },
+          { path: "signUp-success", element: <SignupSuccess /> },
+          { path: "active", element: <Active /> },
+          { path: "accountActivated", element: <AccountActivated /> },
         ],
       },
 
       {
         path: "private",
         element: <PrivateLayout />,
-        children: [{ path: "booking", element: <Booking /> }],
+        children: [
+          { index: true, element: <Navigate to={"/private/dashboard"} /> },
+          { path: "dashboard", element: <Dashboard /> },
+        ],
       },
     ],
   },
