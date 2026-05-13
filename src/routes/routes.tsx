@@ -12,6 +12,7 @@ import LandingPage from "../components/LandingPage";
 import SignupSuccess from "../components/SignupSuccess ";
 import Active from "../components/Active";
 import AccountActivated from "../components/AccountActivated";
+import AvailableSpotsPage from "../components/AvailableSpotsPage";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
           { path: "signUp-success", element: <SignupSuccess /> },
           { path: "active", element: <Active /> },
           { path: "accountActivated", element: <AccountActivated /> },
+          { path: "AvailableSpotsPage", element: <AvailableSpotsPage /> },
         ],
       },
 

@@ -6,7 +6,7 @@ import { create } from "../../services";
 
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import { Check } from "lucide-react";
+
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 type Credentials = {

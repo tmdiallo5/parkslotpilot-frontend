@@ -1,8 +1,76 @@
 import React, { useState } from "react";
 import parkingImg from "../images/parking3.jpg";
+import { search } from "../services";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useNavigate } from "react-router";
+
+type Credentials = {
+  address: string;
+  from: string;
+  until: string;
+};
+
+type Address = {
+  id: number;
+  street: string;
+  zip: string;
+  city: string;
+};
+
+const REQUIERED_FIELD_address = "address is required";
+const REQUIERED_FIELD_from = "start time is required";
+const REQUIERED_FIELD_until = "end time is required";
+
+const schema = yup
+  .object({
+    address: yup.string().required(REQUIERED_FIELD_address),
+    from: yup.string().required(REQUIERED_FIELD_from),
+    until: yup.string().required(REQUIERED_FIELD_until),
+  })
+  .required();
 
 function LandingPage() {
+  const navigate = useNavigate();
+
   const [bookingType, setBookingType] = useState("Hourly");
+
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [selectedAddress, setSelectedAddresse] = useState<Address | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<Credentials>({
+    resolver: yupResolver(schema),
+  });
+
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    if (value.length < 2) {
+      setAddresses([]);
+      return;
+    }
+    const data = await search({
+      url: `search-address?keyword=${value}`,
+    });
+    setAddresses(data);
+  };
+
+  const onSubmit: SubmitHandler<Credentials> = async (credentials) => {
+    if (!selectedAddress) {
+      alert("Please select an address from the list");
+      return;
+    }
+
+    navigate(
+      `/AvailableSpotsPage?addressId=${selectedAddress.id}&from=${credentials.from}&until=${credentials.until}`,
+    );
+  };
 
   return (
     <section className="bg-gray-50 pb-12 sm:pb-16 lg:pb-24 ">
@@ -10,7 +78,10 @@ function LandingPage() {
         <div className="grid items-start lg:items-stretch gap-6 lg:gap-10 lg:grid-cols-2">
           {/* left */}
           <article className="rounded-2xl bg-white p-4 sm:p-6 lg:p-8 shadow-sm">
-            <form action="" className="space-y-4 sm:space-y-5">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-4 sm:space-y-5"
+            >
               <div className="space-y-2">
                 <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 leading-tight">
                   Find your parking space easily
@@ -54,6 +125,9 @@ function LandingPage() {
                     type="text"
                     placeholder="Enter a place"
                     className="w-full bg-transparent text-base font-semibold text-gray-900 placeholder:font-normal placeholder:text-gray-400 focus:outline-none"
+                    {...register("address", {
+                      onChange: handleSearch,
+                    })}
                   />
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -71,6 +145,26 @@ function LandingPage() {
                     <circle cx="11" cy="11" r="8" />
                   </svg>
                 </div>
+                <div>
+                  {addresses.length > 0 &&
+                    addresses.map((address) => (
+                      <button
+                        key={address.id}
+                        type="button"
+                        className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                        onClick={() => {
+                          setSelectedAddresse(address);
+                          setValue(
+                            "address",
+                            `${address.street}, ${address.zip}, ${address.city}`,
+                          );
+                          setAddresses([]);
+                        }}
+                      >
+                        {address.street}, {address.zip}, {address.city}
+                      </button>
+                    ))}
+                </div>
               </div>
 
               {/* Until */}
@@ -82,6 +176,7 @@ function LandingPage() {
                   <input
                     type="datetime-local"
                     className="mt-1 w-full bg-transparent text-base font-semibold placeholder:font-normal placeholder:text-gray-400 focus:outline-none"
+                    {...register("from")}
                   />
                 </div>
                 <div className="rounded-lg border border-gray-300 bg-white px-4 py-3 gap-4">
@@ -91,6 +186,7 @@ function LandingPage() {
                   <input
                     type="datetime-local"
                     className="w-full bg-transparent text-sm font-semibold text-gray-900 placeholder:font-normal placeholder:text-gray-400 focus:outline-none"
+                    {...register("until")}
                   />
                 </div>
               </div>
