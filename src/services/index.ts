@@ -17,13 +17,14 @@ const create = async({url, token, body}: CreateParams) => {
          `/api/${url}`,
          body,
          {
-            headers: {'accept': 'application/json', 'content-type': 'application/json'},
-            ...(token ? { Authorization: `Bearer ${token}` } : {})
+            headers: {
+                'accept': 'application/json', 
+                'content-type': 'application/json', 
+                ...(token ? { Authorization: `Bearer ${token}` } : {})
+            },
+            
          }
-         
-    
-        
-        
+                 
     )
     return response;
 }

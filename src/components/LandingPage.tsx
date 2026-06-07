@@ -167,7 +167,7 @@ function LandingPage() {
                 </div>
               </div>
 
-              {/* Until */}
+              {/* Until and until */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="rounded-lg border border-gray-300 bg-white px-4 py-3">
                   <label className="block text-xs font-medium text-emerald-700">

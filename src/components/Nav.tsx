@@ -17,11 +17,15 @@ function Nav({ user, isLoading, isSuccess }: NavProps) {
   const [open, setOpen] = useState(false);
 
   const displayName = user?.firstName;
-  const filteredLinks = displayName
-    ? NAV_LINKS.filter(
-        (link) => link.label !== "Login" && link.label !== "Signup",
-      )
-    : NAV_LINKS;
+  const filteredLinks = NAV_LINKS.filter((link) => {
+    if (link.private && !displayName) {
+      return false;
+    }
+    if (displayName && (link.label === "Login" || link.label === "Signup")) {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <nav className="ml-auto flex gap-5 mr-2 ">
@@ -44,13 +48,6 @@ function Nav({ user, isLoading, isSuccess }: NavProps) {
 
           {open && (
             <div className="absolute right-0 mt-2 w-48 bg-white shadow-md rounded-md border">
-              <button
-                type="button"
-                className="block w-full px-4 py-3 text-left text-sm hover:bg-gray-100"
-              >
-                My Bookings
-              </button>
-
               <button
                 type="button"
                 className="block w-full px-4 py-3 text-left text-sm hover:bg-gray-100"

@@ -13,6 +13,7 @@ import SignupSuccess from "../components/SignupSuccess ";
 import Active from "../components/Active";
 import AccountActivated from "../components/AccountActivated";
 import AvailableSpotsPage from "../components/AvailableSpotsPage";
+import MyReservation from "../components/reservations/MyReservation";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to={"/private/dashboard"} /> },
           { path: "dashboard", element: <Dashboard /> },
+          { path: "reservation", element: <MyReservation /> },
         ],
       },
     ],
