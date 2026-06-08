@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "../../utils/date";
 
 import ConfirmCancelReservationModal from "./ConfirmCancelReservationModal";
+import StatusBadge from "./StatusBadge";
 
 type Reservation = {
   id: number;
@@ -14,6 +15,7 @@ type Reservation = {
   endDateTime: string;
   reservationStatus: string;
   cancelledAt: string;
+  createdAt: string;
 };
 
 function MyReservation() {
@@ -45,6 +47,7 @@ function MyReservation() {
     enabled: !!token,
     retry: 2,
   });
+  console.log(reservations);
 
   return (
     <>
@@ -80,10 +83,7 @@ function MyReservation() {
                         Spot {item.spotNumber}
                       </p>
                     </div>
-
-                    <span className="rounded-full bg-green-100 px-4 py-1 text-sm font-semibold text-green-700">
-                      {item.reservationStatus}
-                    </span>
+                    <StatusBadge label={item.reservationStatus} />
                   </div>
 
                   <div className="grid gap-4 md:grid-cols-2">
@@ -104,19 +104,26 @@ function MyReservation() {
                   {item.reservationStatus === "CONFIRMED" && (
                     <button
                       onClick={() => setCancelling(item)}
-                      className="mt-6 rounded-lg bg-red-600 px-5 py-2 font-semibold text-white hover:bg-red-700"
+                      className="mt-6 rounded-lg bg-red-600 px-5 py-2 font-semibold text-white hover:bg-red-700 "
                     >
                       Cancel reservation
                     </button>
                   )}
+
+                  {item.reservationStatus === "CONFIRMED" && item.createdAt && (
+                    <div className="mt-4 rounded-lg border border-gray-200 p-3 text-sm  bg-blue-100 text-blue-800">
+                      Reserved on {formatDate(item.createdAt)}
+                    </div>
+                  )}
+
                   {item.reservationStatus === "CANCELLED" &&
                     item.cancelledAt && (
-                      <div className="mt-4 rounded-lg border border-gray-200 p-3 text-sm text-gray-600">
-                        Cancelled on{formatDate(item.cancelledAt)}
+                      <div className="mt-4 rounded-lg border border-gray-200 p-3 text-sm  bg-red-100 text-red-800">
+                        Cancelled on {formatDate(item.cancelledAt)}
                       </div>
                     )}
                   {item.reservationStatus === "COMPLETED" && (
-                    <div className="mt-4 rounded-lg border border-gray-200 p-3 text-sm text-gray-600">
+                    <div className="mt-4 rounded-lg border border-gray-200 p-3 text-sm  bg-green-100 text-green-800">
                       Parking session completed
                     </div>
                   )}

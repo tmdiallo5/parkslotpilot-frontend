@@ -1,3 +1,4 @@
+import { formatDate } from "../../utils/date";
 import type { AvailableSpotType } from "../AvailableSpot";
 import { X } from "lucide-react";
 
@@ -30,10 +31,10 @@ function ConfirmReservationModal({ spot, onClose, onConfirm }: Props) {
             <strong>Type:</strong> {spot.spotType}
           </p>
           <p>
-            <strong>From:</strong> {spot.from}
+            <strong>From:</strong> {formatDate(spot.from)}
           </p>
           <p>
-            <strong>Until:</strong> {spot.until}
+            <strong>Until:</strong> {formatDate(spot.until)}
           </p>
           <p>
             <strong>Price:</strong> {spot.priceHour} €/h
