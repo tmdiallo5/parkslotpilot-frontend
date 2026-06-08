@@ -45,4 +45,20 @@ const search = async({url, token}: Params) => {
     return data;
 
 }
-export {create, search}
+
+const cancel = async ({url, token}: Params) => {
+  const response = await axios.patch(
+    `/api/${url}`,
+    {},
+    {
+      headers: {
+        accept: 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      }
+    }
+  );
+
+  return response.data;
+}
+
+export {create, search, cancel}
