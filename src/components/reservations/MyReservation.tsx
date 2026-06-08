@@ -109,12 +109,17 @@ function MyReservation() {
                       Cancel reservation
                     </button>
                   )}
-                  {item.reservationStatus == "CANCELLED" &&
+                  {item.reservationStatus === "CANCELLED" &&
                     item.cancelledAt && (
                       <div className="mt-4 rounded-lg border border-gray-200 p-3 text-sm text-gray-600">
                         Cancelled on{formatDate(item.cancelledAt)}
                       </div>
                     )}
+                  {item.reservationStatus === "COMPLETED" && (
+                    <div className="mt-4 rounded-lg border border-gray-200 p-3 text-sm text-gray-600">
+                      Parking session completed
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
