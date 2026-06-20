@@ -8,17 +8,17 @@ function AvailableSpotsPage() {
   const [searchParams] = useSearchParams();
 
   const addressId = searchParams.get("addressId");
-  const from = searchParams.get("from");
-  const until = searchParams.get("until");
+  const startDateTime = searchParams.get("startDateTime");
+  const endDateTime = searchParams.get("endDateTime");
 
   const { data: spot = [] } = useQuery({
-    queryKey: ["available-spot", addressId, from, until],
+    queryKey: ["available-spot", addressId, startDateTime, endDateTime],
 
     queryFn: async () => {
       const request = {
         addressId: addressId,
-        from: from,
-        until: until,
+        startDateTime: startDateTime,
+        endDateTime: endDateTime,
       };
       const response = await create({
         url: "available-spot",
@@ -26,7 +26,7 @@ function AvailableSpotsPage() {
       });
       return response.data;
     },
-    enabled: !!addressId && !!from && !!until,
+    enabled: !!addressId && !!startDateTime && !!startDateTime,
     retry: 2,
   });
 

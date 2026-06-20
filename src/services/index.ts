@@ -61,4 +61,19 @@ const cancel = async ({url, token}: Params) => {
   return response.data;
 }
 
-export {create, search, cancel}
+const update = async ({url, token, body}: CreateParams) => {
+      const response = await  axios.put(
+           `/api/${url}`, 
+           body,
+          {
+             headers: {
+                'accept': 'application/json',
+                'content-type': 'application/json',
+                ...(token ? {Authorization: `Bearer ${token}`}: {})
+           }
+          }
+        )
+        return response;
+}
+
+export {create, search, cancel, update}

@@ -1,7 +1,9 @@
 export const NAV_LINKS = [
     
+   
+
       {
-        to: "",
+        to: "/",
         label: "Find parking",
         private: false,
         className: "text-sm text-slate-600 font-medium py-1.5 hover:text-slate-600"

@@ -8,8 +8,8 @@ import { useNavigate } from "react-router";
 
 type Credentials = {
   address: string;
-  from: string;
-  until: string;
+  startDateTime: string;
+  endDateTime: string;
 };
 
 type Address = {
@@ -20,14 +20,14 @@ type Address = {
 };
 
 const REQUIERED_FIELD_address = "address is required";
-const REQUIERED_FIELD_from = "start time is required";
-const REQUIERED_FIELD_until = "end time is required";
+const REQUIERED_FIELD_startDateTime = "start time is required";
+const REQUIERED_FIELD_endDateTime = "end time is required";
 
 const schema = yup
   .object({
     address: yup.string().required(REQUIERED_FIELD_address),
-    from: yup.string().required(REQUIERED_FIELD_from),
-    until: yup.string().required(REQUIERED_FIELD_until),
+    startDateTime: yup.string().required(REQUIERED_FIELD_startDateTime),
+    endDateTime: yup.string().required(REQUIERED_FIELD_endDateTime),
   })
   .required();
 
@@ -68,7 +68,7 @@ function LandingPage() {
     }
 
     navigate(
-      `/AvailableSpotsPage?addressId=${selectedAddress.id}&from=${credentials.from}&until=${credentials.until}`,
+      `/AvailableSpotsPage?addressId=${selectedAddress.id}&startDateTime=${credentials.startDateTime}&endDateTime=${credentials.endDateTime}`,
     );
   };
 
@@ -167,7 +167,7 @@ function LandingPage() {
                 </div>
               </div>
 
-              {/* Until and until */}
+              {/* from and until */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="rounded-lg border border-gray-300 bg-white px-4 py-3">
                   <label className="block text-xs font-medium text-emerald-700">
@@ -176,7 +176,7 @@ function LandingPage() {
                   <input
                     type="datetime-local"
                     className="mt-1 w-full bg-transparent text-base font-semibold placeholder:font-normal placeholder:text-gray-400 focus:outline-none"
-                    {...register("from")}
+                    {...register("startDateTime")}
                   />
                 </div>
                 <div className="rounded-lg border border-gray-300 bg-white px-4 py-3 gap-4">
@@ -186,7 +186,7 @@ function LandingPage() {
                   <input
                     type="datetime-local"
                     className="w-full bg-transparent text-sm font-semibold text-gray-900 placeholder:font-normal placeholder:text-gray-400 focus:outline-none"
-                    {...register("until")}
+                    {...register("endDateTime")}
                   />
                 </div>
               </div>

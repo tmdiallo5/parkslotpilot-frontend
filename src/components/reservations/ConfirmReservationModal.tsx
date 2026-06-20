@@ -31,10 +31,10 @@ function ConfirmReservationModal({ spot, onClose, onConfirm }: Props) {
             <strong>Type:</strong> {spot.spotType}
           </p>
           <p>
-            <strong>From:</strong> {formatDate(spot.from)}
+            <strong>From:</strong> {formatDate(spot.startDateTime)}
           </p>
           <p>
-            <strong>Until:</strong> {formatDate(spot.until)}
+            <strong>Until:</strong> {formatDate(spot.endDateTime)}
           </p>
           <p>
             <strong>Price:</strong> {spot.priceHour} €/h

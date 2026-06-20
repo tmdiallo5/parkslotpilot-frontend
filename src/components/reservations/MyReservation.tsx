@@ -1,15 +1,22 @@
 import { useContext, useState } from "react";
 import { GlobalApplicationContext } from "../../context/GlobalApplicationContextProvider";
-import { cancel, search } from "../../services";
+import { cancel, search, update } from "../../services";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "../../utils/date";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
 import ConfirmCancelReservationModal from "./ConfirmCancelReservationModal";
 import StatusBadge from "./StatusBadge";
 
-type Reservation = {
+import EditReservationForm from "./EditReservationForm";
+
+export type Reservation = {
   id: number;
   parkingName: string;
+  parkingId: number;
+  addressId: number;
+  spotId: number;
   spotNumber: string;
   startDateTime: string;
   endDateTime: string;
@@ -18,8 +25,20 @@ type Reservation = {
   createdAt: string;
 };
 
+export type ReservationUpdateRequest = {
+  spotId: number;
+  startDateTime: string;
+  endDateTime: string;
+};
+
+type UpdateMutationParams = {
+  id: number;
+  body: ReservationUpdateRequest;
+};
+
 function MyReservation() {
   const [cancelling, setCancelling] = useState<Reservation>();
+  const [editReservation, setEditReservation] = useState<Reservation>();
 
   const {
     state: { token },
@@ -27,7 +46,22 @@ function MyReservation() {
 
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
+  const updateMutation = useMutation({
+    mutationFn: ({ id, body }: UpdateMutationParams) =>
+      update({
+        url: `update/${id}`,
+        token,
+        body,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["my-reservations"],
+      });
+      setEditReservation(undefined);
+    },
+  });
+
+  const cancelMutation = useMutation({
     mutationFn: (id: number) =>
       cancel({
         url: `cancel/${id}`,
@@ -47,7 +81,24 @@ function MyReservation() {
     enabled: !!token,
     retry: 2,
   });
-  console.log(reservations);
+  console.log("The reservations:", reservations);
+
+  const calculDuration = (start: string, end: string) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    const diffMs = endDate.getTime() - startDate.getTime();
+    const hours = Math.floor(diffMs / 3600000);
+    const minutes = Math.floor((diffMs % 3600000) / 60000);
+
+    if (hours > 0 && minutes > 0) {
+      return `${hours}h ${minutes}min`;
+    }
+    if (hours > 0) {
+      return `${hours}h`;
+    }
+    return `${minutes}min`;
+  };
 
   return (
     <>
@@ -86,8 +137,9 @@ function MyReservation() {
                     <StatusBadge label={item.reservationStatus} />
                   </div>
 
-                  <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-4 md:grid-cols-3">
                     <div className="rounded-xl bg-gray-50 p-4">
+                      <CalendarTodayIcon fontSize="small" />
                       <p className="text-sm text-gray-500">From</p>
                       <p className="font-semibold text-gray-900">
                         {formatDate(item.startDateTime)}
@@ -95,20 +147,39 @@ function MyReservation() {
                     </div>
 
                     <div className="rounded-xl bg-gray-50 p-4">
+                      <CalendarTodayIcon fontSize="small" />
                       <p className="text-sm text-gray-500">Until</p>
                       <p className="font-semibold text-gray-900">
                         {formatDate(item.endDateTime)}
                       </p>
                     </div>
+
+                    <div className="rounded-xl bg-gray-50 p-4">
+                      <AccessTimeIcon fontSize="small" />
+                      <p className="text-sm text-gray-500">Duration</p>
+                      <p className="font-semibold text-gray-900">
+                        {calculDuration(item.startDateTime, item.endDateTime)}
+                      </p>
+                    </div>
                   </div>
-                  {item.reservationStatus === "CONFIRMED" && (
-                    <button
-                      onClick={() => setCancelling(item)}
-                      className="mt-6 rounded-lg bg-red-600 px-5 py-2 font-semibold text-white hover:bg-red-700 "
-                    >
-                      Cancel reservation
-                    </button>
-                  )}
+                  <div className="mt-6 flex gap-3">
+                    {item.reservationStatus === "CONFIRMED" && (
+                      <button
+                        onClick={() => setCancelling(item)}
+                        className="mt-6 rounded-lg bg-red-600 px-5 py-2 font-semibold text-white hover:bg-red-700 "
+                      >
+                        Cancel reservation
+                      </button>
+                    )}
+                    {item.reservationStatus === "CONFIRMED" && (
+                      <button
+                        onClick={() => setEditReservation(item)}
+                        className="mt-6 rounded-lg bg-green-600 px-5 py-2 font-semibold text-white hover:bg-green-700 "
+                      >
+                        Edit reservation
+                      </button>
+                    )}
+                  </div>
 
                   {item.reservationStatus === "CONFIRMED" && item.createdAt && (
                     <div className="mt-4 rounded-lg border border-gray-200 p-3 text-sm  bg-blue-100 text-blue-800">
@@ -133,14 +204,26 @@ function MyReservation() {
           )}
         </div>
       </div>
+      {editReservation && (
+        <EditReservationForm
+          reservation={editReservation}
+          onSave={(body) => {
+            updateMutation.mutate({
+              id: editReservation.id,
+              body,
+            });
+          }}
+          onClose={() => setEditReservation(undefined)}
+        />
+      )}
       {cancelling && (
         <ConfirmCancelReservationModal
           onConfirm={() => {
-            mutation.mutate(cancelling.id);
+            cancelMutation.mutate(cancelling.id);
             setCancelling(undefined);
           }}
           onClose={() => setCancelling(undefined)}
-          isLoading={mutation.isPending}
+          isLoading={cancelMutation.isPending}
         />
       )}
     </>

@@ -16,8 +16,8 @@ export type AvailableSpotType = {
   latitude: number;
   longitude: number;
   address: string;
-  from: string;
-  until: string;
+  startDateTime: string;
+  endDateTime: string;
 };
 
 type Props = {
@@ -43,8 +43,8 @@ function AvailableSpot({ spots }: Props) {
         token,
         body: {
           spotId: spot.spotId,
-          startDateTime: spot.from,
-          endDateTime: spot.until,
+          startDateTime: spot.startDateTime,
+          endDateTime: spot.endDateTime,
         },
       }),
 
@@ -92,7 +92,8 @@ function AvailableSpot({ spots }: Props) {
               <p className="font-medium text-green-800">Available</p>
 
               <p className="mt-1 text-green-700">
-                From {formatDate(spot.from)} until {formatDate(spot.until)}
+                From {formatDate(spot.startDateTime)} until{" "}
+                {formatDate(spot.endDateTime)}
               </p>
             </div>
 
