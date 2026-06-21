@@ -1,10 +1,3 @@
-import { useContext, useState } from "react";
-import { GlobalApplicationContext } from "../context/GlobalApplicationContextProvider";
-import { useMutation } from "@tanstack/react-query";
-import { create } from "../services";
-import { useNavigate } from "react-router";
-import ConfirmReservationModal from "./reservations/ConfirmReservationModal";
-import ReservationSuccessModal from "./reservations/ReservationSuccessModal";
 import { formatDate } from "../utils/date";
 
 export type AvailableSpotType = {
@@ -23,38 +16,10 @@ export type AvailableSpotType = {
 
 type Props = {
   spots: AvailableSpotType[];
+  onReserve: (spot: AvailableSpotType) => void;
 };
 
-function AvailableSpot({ spots }: Props) {
-  const [selectedSpot, setSelectedSpot] = useState<AvailableSpotType | null>(
-    null,
-  );
-  const [showSuccess, setShowSuccess] = useState(false);
-
-  const navigate = useNavigate();
-
-  const {
-    state: { token },
-  } = useContext(GlobalApplicationContext);
-
-  const mutation = useMutation({
-    mutationFn: (spot: AvailableSpotType) =>
-      create({
-        url: "reservation",
-        token,
-        body: {
-          spotId: spot.spotId,
-          startDateTime: spot.startDateTime,
-          endDateTime: spot.endDateTime,
-        },
-      }),
-
-    onSuccess: () => {
-      setSelectedSpot(null);
-      setShowSuccess(true);
-    },
-  });
-
+function AvailableSpot({ spots, onReserve }: Props) {
   return (
     <>
       <div className="mt-6 space-y-4">
@@ -106,15 +71,7 @@ function AvailableSpot({ spots }: Props) {
             </div>
 
             <button
-              onClick={() => {
-                {
-                  if (!token) {
-                    navigate("/login");
-                    return;
-                  }
-                  setSelectedSpot(spot);
-                }
-              }}
+              onClick={() => onReserve(spot)}
               className="mt-5 w-full rounded-lg bg-green-700 py-3 font-semibold text-white transition hover:bg-green-600"
             >
               Reserve spot
@@ -122,19 +79,6 @@ function AvailableSpot({ spots }: Props) {
           </div>
         ))}
       </div>
-      {selectedSpot && (
-        <ConfirmReservationModal
-          spot={selectedSpot}
-          onClose={() => setSelectedSpot(null)}
-          onConfirm={() => mutation.mutate(selectedSpot)}
-        />
-      )}
-
-      {showSuccess && (
-        <ReservationSuccessModal
-          onViewReservations={() => navigate("/private/reservation")}
-        />
-      )}
     </>
   );
 }

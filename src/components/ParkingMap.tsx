@@ -3,9 +3,10 @@ import type { AvailableSpotType } from "./AvailableSpot";
 
 type Props = {
   spots: AvailableSpotType[];
+  onReserve: (spot: AvailableSpotType) => void;
 };
 
-function ParkingMap({ spots }: Props) {
+function ParkingMap({ spots, onReserve }: Props) {
   const firstSPost = spots[0];
 
   const center: [number, number] = firstSPost
@@ -34,7 +35,10 @@ function ParkingMap({ spots }: Props) {
 
               <p>{spot.address}</p>
 
-              <button className="rounded bg-green-700 px-3 py-1 text-white">
+              <button
+                onClick={() => onReserve(spot)}
+                className="rounded bg-green-700 px-3 py-1 text-white"
+              >
                 Reserve
               </button>
             </div>
