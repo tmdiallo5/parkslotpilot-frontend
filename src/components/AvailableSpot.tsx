@@ -16,6 +16,7 @@ export type AvailableSpotType = {
   latitude: number;
   longitude: number;
   address: string;
+  imageUrl: string;
   startDateTime: string;
   endDateTime: string;
 };
@@ -62,6 +63,13 @@ function AvailableSpot({ spots }: Props) {
             key={spot.spotId}
             className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
           >
+            {spot.imageUrl && (
+              <img
+                src={spot.imageUrl}
+                alt={spot.parkingName}
+                className="mb-4 h-48 w-full rounded-xl object-cover"
+              />
+            )}
             <div className="flex items-start justify-between">
               <div>
                 <h2 className="text-lg font-bold text-gray-900">

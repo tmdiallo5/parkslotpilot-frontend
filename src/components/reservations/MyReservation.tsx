@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "../../utils/date";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 import ConfirmCancelReservationModal from "./ConfirmCancelReservationModal";
 import StatusBadge from "./StatusBadge";
@@ -16,13 +17,22 @@ export type Reservation = {
   parkingName: string;
   parkingId: number;
   addressId: number;
+  address: Address;
   spotId: number;
   spotNumber: string;
+  spotType: string;
   startDateTime: string;
   endDateTime: string;
   reservationStatus: string;
   cancelledAt: string;
   createdAt: string;
+  imageUrl: string;
+};
+
+type Address = {
+  street: string;
+  zip: string;
+  city: string;
 };
 
 export type ReservationUpdateRequest = {
@@ -126,13 +136,29 @@ function MyReservation() {
                   className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:shadow-md"
                 >
                   <div className="mb-5 flex items-start justify-between">
-                    <div>
-                      <h2 className="text-xl font-bold text-gray-900">
-                        {item.parkingName}
-                      </h2>
-                      <p className="mt-1 text-gray-500">
-                        Spot {item.spotNumber}
-                      </p>
+                    <div className="flex items-start gap-4">
+                      {item.imageUrl && (
+                        <img
+                          src={item.imageUrl}
+                          alt={item.parkingName}
+                          className="h-24 w-36 rounded-xl object-cover"
+                        />
+                      )}
+                      <div>
+                        <h2 className="text-xl font-bold text-gray-900">
+                          {item.parkingName}
+                        </h2>
+                        <p className="mt-1 flex items-center gap-1 text-gray-500">
+                          <LocationOnIcon fontSize="small" />
+                          <span>
+                            {item.address.street}, {item.address.zip}{" "}
+                            {item.address.city}
+                          </span>
+                        </p>
+                        <p className="mt-1 text-gray-500">
+                          Spot {item.spotNumber} . {item.spotType}
+                        </p>
+                      </div>
                     </div>
                     <StatusBadge label={item.reservationStatus} />
                   </div>

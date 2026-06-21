@@ -1,10 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { create } from "../services";
-import AvailableSpot from "./AvailableSpot";
+
 import ParkingMap from "./ParkingMap";
+import { useContext } from "react";
+import { GlobalApplicationContext } from "../context/GlobalApplicationContextProvider";
 
 function AvailableSpotsPage() {
+  const {
+    state: { token },
+  } = useContext(GlobalApplicationContext);
+
+  const navigate = useNavigate();
+
   const [searchParams] = useSearchParams();
 
   const addressId = searchParams.get("addressId");
@@ -37,12 +45,18 @@ function AvailableSpotsPage() {
           <h1 className="mb-6 text-2xl font-bold text-gray-900">
             Available parking spaces
           </h1>
-          <AvailableSpot spots={spot} />
         </div>
 
         {/* map */}
         <div className="h-150 w-full lg:sticky lg:top-6">
-          <ParkingMap spots={spot} />
+          <ParkingMap
+            spots={spot}
+            onReserve={(spot) => {
+              if (!token) {
+                navigate("/login");
+              }
+            }}
+          />
         </div>
       </div>
     </section>
