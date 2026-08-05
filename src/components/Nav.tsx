@@ -2,16 +2,17 @@ import { NavLink } from "react-router";
 import { NAV_LINKS } from "../utils/data";
 import type { Profile } from "../type/Profie";
 import { useContext, useState } from "react";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, Bot } from "lucide-react";
 import { GlobalApplicationContext } from "../context/GlobalApplicationContextProvider";
 
 type NavProps = {
   user?: Profile;
   isLoading?: boolean;
   isSuccess?: boolean;
+  onOpenChat: () => void;
 };
 
-function Nav({ user, isLoading, isSuccess }: NavProps) {
+function Nav({ user, isLoading, isSuccess, onOpenChat }: NavProps) {
   const { logout } = useContext(GlobalApplicationContext);
 
   const [open, setOpen] = useState(false);
@@ -29,11 +30,27 @@ function Nav({ user, isLoading, isSuccess }: NavProps) {
 
   return (
     <nav className="ml-auto flex gap-5 mr-2 ">
-      {filteredLinks.map(({ to, label, className }) => (
-        <NavLink key={to} to={to} className={className}>
-          {label}
-        </NavLink>
-      ))}
+      {filteredLinks.map((link) => {
+        if (link.type === "action") {
+          return (
+            <button
+              key={link.label}
+              type="button"
+              onClick={onOpenChat}
+              className={`${link.className} flex items-center gap-2`}
+            >
+              <Bot size={18} />
+              {link.label}
+            </button>
+          );
+        }
+
+        return (
+          <NavLink key={link.label} to={link.to} className={link.className}>
+            {link.label}
+          </NavLink>
+        );
+      })}
 
       {!isLoading && isSuccess && displayName && (
         <div className="relative ml-2">

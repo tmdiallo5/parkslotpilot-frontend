@@ -5,7 +5,11 @@ import { GlobalApplicationContext } from "../../context/GlobalApplicationContext
 import { useQuery } from "@tanstack/react-query";
 import { search } from "../../services";
 
-function Header() {
+type HeaderProps = {
+  onOpenChat: () => void;
+};
+
+function Header({ onOpenChat }: HeaderProps) {
   const {
     state: { token },
   } = useContext(GlobalApplicationContext);
@@ -16,14 +20,17 @@ function Header() {
     retry: 2,
   });
   return (
-    <>
-      <header className="fixed top-0 w-full border-b border-gray-200 bg-white rounded-md">
-        <div className="mx-auto flex h-16 items-center justify-between">
-          <Logo />
-          <Nav user={data} isSuccess={isSuccess} isLoading={isLoading} />
-        </div>
-      </header>
-    </>
+    <header className="fixed top-0 w-full border-b border-gray-200 bg-white rounded-md">
+      <div className="mx-auto flex h-16 items-center justify-between">
+        <Logo />
+        <Nav
+          user={data}
+          isSuccess={isSuccess}
+          isLoading={isLoading}
+          onOpenChat={onOpenChat}
+        />
+      </div>
+    </header>
   );
 }
 
